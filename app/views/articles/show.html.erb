@@ -3,6 +3,8 @@
   <%= @article.title %>
 </p>
 
+<p>Category: <%= @article.category.try(:name) %></p>
+
 <p>
   <strong>Text:</strong>
   <%= @article.text %>
