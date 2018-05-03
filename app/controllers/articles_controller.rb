@@ -3,7 +3,13 @@ class ArticlesController < ApplicationController
 	before_action :set_article, only: [:show, :edit, :update, :destroy]
 
 	def index
-		@articles = Article.page(params[:page]).per(5)
+		if params[:keyword]
+			@articles = Article.where(["title like ?", "%#{params[:keyword]}%"])
+		else
+			@articles = Article.all
+		end
+
+		@articles = @articles.order(created_at: :desc, title: :asc).page(params[:page]).per(5)
 
 		respond_to do |format|
 			format.html
@@ -33,7 +39,6 @@ class ArticlesController < ApplicationController
 	end
 
 	def update
-
 		if @article.update(article_params)
 			flash[:notice] = "event was successfully updated"
 			redirect_to @article
@@ -49,12 +54,25 @@ class ArticlesController < ApplicationController
 		redirect_to articles_path
 	end
 
-	private
-		def article_params
-			params.require(:article).permit(:title, :text, :category_id)
+	def bulk_update
+		ids = Array(params:[ids])
+		articles = ids.map{ |i| Article.find_by_id(i) }.compact
+
+		if params[:commit] == "Publish"
+			articles.each{ |a| a.update(status: "published")}
+		elsif params[:commit] == "Delete"
+			articles.each{ |a| a.destroy }
 		end
 
-	def set_article
-		@article = Article.find(params[:id])
-	end
+		redirect_to articles_path
+	end	
+
+	private
+		def article_params
+			params.require(:article).permit(:title, :text, :category_id, topic_ids: [])
+		end
+
+		def set_article
+			@article = Article.find(params[:id])
+		end
 end

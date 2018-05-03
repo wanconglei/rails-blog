@@ -5,6 +5,10 @@ Rails.application.routes.draw do
 
   resources :articles do
     resources :comments
+
+    collection do
+      post  :bulk_update
+    end
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

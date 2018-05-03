@@ -5,6 +5,12 @@
 
 <p>Category: <%= @article.category.try(:name) %></p>
 
+<p>Topic:
+	<% @article.topics.each do |g| %>
+		<%= g.name %>
+	<% end %>
+</p>
+
 <p>
   <strong>Text:</strong>
   <%= @article.text %>

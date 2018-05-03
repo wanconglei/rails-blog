@@ -1,12 +1,18 @@
 <h1>Hello, Rails!</h1>
 
+<%= form_tag(articles_path, method: "get") do %>
+  <%= text_field_tag "keyword" %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+
 <%= link_to 'New article', new_article_path %>
 <table>
   <tr>
     <th>Title</th>
     <th>Text</th>
   </tr>
- 
+
   <% @articles.each do |article| %>
     <tr>
       <td><%= article.title %></td>
@@ -18,5 +24,21 @@
               data: { confirm: 'Are you sure?' } %></td>
     </tr>
   <% end %>
-<%= paginate @articles %>
 </table>
+
+  <%= paginate @articles %>
+  <%= form_tag bulk_update_articles_path do %>
+
+  <ul>
+    <% @articles.each do |a| %>
+      <li>
+        <%= check_box_tag "ids[]", a.id, false %>
+        <%= a.title %>
+      </li>
+    <% end %>
+  </ul>
+  <% end %>
+
+<%= submit_tag "Delete" %>
+<%= submit_tag "Publish" %>
+
